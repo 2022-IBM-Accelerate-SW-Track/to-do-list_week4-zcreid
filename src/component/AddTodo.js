@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, TextField } from "@mui/material";
 import { DesktopDatePicker , LocalizationProvider} from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import Axios from "axios";
 
 class AddTodo extends Component {
   // Create a local react state of the this component with both content date property set to nothing.
@@ -38,6 +39,12 @@ class AddTodo extends Component {
   // in the Home.js file which then adds the input into the list.
   handleSubmit = (event) => {
     event.preventDefault();
+    const jsonObject = {
+      id: this.state.id,
+      task: this.state.content.trim(),
+      currentDate: this.state.date,
+      dueDate: this.state.duedate
+   };
     if (this.state.content.trim()) {
       this.props.addTodo(this.state);
       this.setState({
@@ -46,6 +53,16 @@ class AddTodo extends Component {
         duedate: null
       });
     }
+    Axios({
+      method: "POST",
+      url: "http://localhost:3001/add/item",
+      data: {jsonObject},
+      headers: {
+         "Content-Type": "application/json"
+      }
+   }).then(res => {
+      console.log(res.data.message);
+   });
   };
   render() {
     return (
